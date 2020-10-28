@@ -9,18 +9,23 @@
       />
     </td>
     <td>
-      <label
+      <label class="content__edit"
+        contenteditable="true"
         :class="todoProps.isCompleted ? 'completed' : ''"
-        :for="`completeCheckbox-${todoProps.id}`"
         >{{ todoProps.name }}</label
       >
     </td>
     <td>
-      <span :class="todoProps.isCompleted ? 'completed' : ''"
+      <span class="content__edit"
+        contenteditable="true"
+        :class="todoProps.isCompleted ? 'completed' : ''"
         >{{ todoProps.workTime }} phút</span
       >
     </td>
     <td>
+      <!-- <button class="btn btn__edit mx--20" @click="editItem">
+        Edit
+      </button> -->
       <button class="btn btn__remove" @click="removeItem(indexProps)">
         Remove
       </button>
@@ -32,13 +37,20 @@
 export default {
   name: "TodoItem",
   props: ["todoProps", "indexProps"], //get data from parent component
+  // setup(props, context){
+  //   const removeItem = () => {
+  //     // console.log(props.todoProps);
+  //     context.emit('remove-from-parent', props.todoProps.id)
+  //   }
+  //   return { removeItem }
+  // },
   methods: {
     complete(todoProps) {
       todoProps.isCompleted = !todoProps.isCompleted;
     },
     removeItem(index) {
       this.$emit("remove-from-parent", index); //child to parent
-    },
+    }
   },
 };
 </script>
@@ -49,11 +61,13 @@ export default {
   background-color: #f5f5f5;
   border-bottom: 1px #ccc dotted;
 }
-.btn__remove {
-  background-color: #ff0000;
-  color: #fff;
-}
+
 .completed {
   text-decoration: line-through;
+}
+.content__edit:focus{
+  outline: none;
+  padding: 5px 20px;
+  border: 1px solid #6495ed;
 }
 </style>

@@ -7,6 +7,16 @@
   color: #fff;
 }
 
+.btn__add {
+    background-color: green;
+    padding: 8px 15px;
+  }
+.btn__remove {
+    background-color: #ff0000;
+  }
+.btn__edit{
+    background-color: #6495ed;
+}
 .my--20{
     margin: 20px 0;
 }
@@ -22,3 +32,6 @@
 .bg--blue{
     background-color: #0000ff;
 }
+.add__input {
+    padding: 8px;
+  }

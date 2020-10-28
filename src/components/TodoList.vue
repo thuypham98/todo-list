@@ -3,6 +3,7 @@
     <img alt="Vue logo" height="50" src="../assets/logo.png" />
     <h1>Todo List</h1>
   </div>
+  <!-- <div contenteditable="true">I'm Editable. Edit me!</div> -->
   <div class="content">
     <button
       class="btn my--20 bg--blue"
@@ -12,11 +13,13 @@
       +
     </button>
     <div class="add__todo--item" v-if="isShow">
-      <input
+      <AddItem v-bind:todoList="todoList" @add-item="addItem"/>
+      <!-- <input
         type="text"
         class="add__input"
         placeholder="Todo name"
         v-model="name"
+        @change="isChange"
       />
       <input
         type="number"
@@ -24,8 +27,9 @@
         placeholder="Todo time"
         min="1"
         v-model="workTime"
+        @change="isChange"
       />
-      <button class="btn btn__add" @click="addTodoItem()">Add</button>
+      <button class="btn btn__add" @click="addTodoItem()">Add</button> -->
     </div>
     <p style="color: #ff0000" v-if="isError">Vui lòng nhập công việc</p>
     <table class="todo__table--list" border="1" cellpadding="5" cellspacing="0">
@@ -49,11 +53,13 @@
 <script>
 import { ref } from "vue";
 import TodoItem from "./TodoItem";
+import AddItem from './AddItem';
 
 export default {
   name: "TodoList",
   components: {
     TodoItem,
+    AddItem
   },
   setup() {
     const todoList = ref([
@@ -76,7 +82,10 @@ export default {
         isCompleted: false,
       },
     ]);
-    return { todoList };
+    const addItem = newItem => {
+      todoList.value.push(newItem);
+    }
+    return { todoList, addItem };
   },
   data() {
     return {
@@ -107,8 +116,17 @@ export default {
         this.workTime = 1;
       }
     },
+    isChange(){
+      window.addEventListener('onbeforeunload', () => {
+        const isLeave = window.confirm('Do you want to leave without finishing?');
+        if(!isLeave){
+          console.log('nooo');
+        }
+      });
+    }
   },
 };
+
 </script>
 
 <style scoped>
@@ -120,9 +138,7 @@ export default {
 .add__todo--item {
   margin: 10px 0;
 }
-.add__input {
-  padding: 8px;
-}
+
 input.add__input:focus {
   outline: none;
   border: 1px solid turquoise;
@@ -131,8 +147,5 @@ input.add__input:focus {
   width: 100%;
   text-align: center;
 }
-.btn__add {
-  background-color: green;
-  padding: 8px 15px;
-}
+
 </style>>
