@@ -1,151 +1,101 @@
 <template>
-  <div class="header" align="center">
-    <img alt="Vue logo" height="50" src="../assets/logo.png" />
-    <h1>Todo List</h1>
-  </div>
-  <!-- <div contenteditable="true">I'm Editable. Edit me!</div> -->
-  <div class="content">
-    <button
-      class="btn my--20 bg--blue"
-      v-if="!isShow"
-      @click="isShow = !isShow"
-    >
-      +
-    </button>
-    <div class="add__todo--item" v-if="isShow">
-      <AddItem v-bind:todoList="todoList" @add-item="addItem"/>
-      <!-- <input
-        type="text"
-        class="add__input"
-        placeholder="Todo name"
-        v-model="name"
-        @change="isChange"
-      />
-      <input
-        type="number"
-        class="add__input mx--20"
-        placeholder="Todo time"
-        min="1"
-        v-model="workTime"
-        @change="isChange"
-      />
-      <button class="btn btn__add" @click="addTodoItem()">Add</button> -->
-    </div>
-    <p style="color: #ff0000" v-if="isError">Vui lòng nhập công việc</p>
-    <table class="todo__table--list" border="1" cellpadding="5" cellspacing="0">
-      <tr bgColor="cadetblue">
-        <th>Complete</th>
-        <th>Work</th>
+  <div class="px--5 mb--30">
+    <transition name="fade">
+      <button
+        class="btn my--15 bg--blue float--right btn__add-todo"
+        v-if="!isShowAddForm"
+        @click="isShowAddForm = !isShowAddForm"
+      >
+        ✢
+      </button>
+    </transition>
+    <AddTodo
+      v-if="isShowAddForm"
+      @add-todo="addTodo($event)"
+      @cancelAdd="isShowAddForm = !isShowAddForm"
+    />
+    <table class="table__todo-list mobile__fs--13">
+      <tr bgColor="cadetblue" class="text--light">
+        <th>Done</th>
+        <th>Name</th>
         <th>Time</th>
+        <th>Note</th>
         <th>Action</th>
       </tr>
       <TodoItem
         v-for="(todo, index) in todoList"
         v-bind:key="todo.id"
         v-bind:todoProps="todo"
-        v-bind:indexProps="index"
-        @remove-from-parent="removeTodoItem"
+        v-bind:indexTodo="index"
+        @completeTodo="completeTodo($event)"
+        @confirmRemove="openConfirmModal($event)"
       />
     </table>
+    <DeleteModal
+      :deleteModal="deleteModal"
+      @closeModal="deleteModal = $event"
+      @handleDelete="handleDeleteTodo()"
+    />
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
-import TodoItem from "./TodoItem";
-import AddItem from './AddItem';
+import { ref, watch } from 'vue';
+import TodoItem from './TodoItem';
+import AddTodo from './AddTodo';
+import todos from '@/data/todo.json';
+import DeleteModal from '@/components/DeleteModal.vue';
 
 export default {
-  name: "TodoList",
+  name: 'TodoList',
   components: {
     TodoItem,
-    AddItem
+    AddTodo,
+    DeleteModal,
   },
   setup() {
-    const todoList = ref([
-      {
-        id: 1,
-        name: "Đọc sách",
-        workTime: 30,
-        isCompleted: false,
-      },
-      {
-        id: 2,
-        name: "Học tập",
-        workTime: 60,
-        isCompleted: false,
-      },
-      {
-        id: 3,
-        name: "Chơi game",
-        workTime: 180,
-        isCompleted: false,
-      },
-    ]);
-    const addItem = newItem => {
+    const todoList = ref(todos);
+    const addTodo = (newItem) => {
       todoList.value.push(newItem);
-    }
-    return { todoList, addItem };
+    };
+    const completeTodo = ({ value, index }) => {
+      todoList.value[index].completed = value;
+    };
+    watch(todoList.value, () => {
+      todoList.value.sort((a, b) => a.completed - b.completed);
+    });
+    return { todoList, addTodo, completeTodo };
   },
   data() {
     return {
-      isShow: false,
-      isError: false,
-      name: "",
-      workTime: 1,
+      isShowAddForm: false,
+      deleteModal: false,
+      todoIndex: null,
     };
   },
   methods: {
-    removeTodoItem(index) {
-      this.todoList.splice(index, 1);
+    openConfirmModal(index) {
+      this.todoIndex = index;
+      this.deleteModal = true;
     },
-    addTodoItem() {
-      if (this.name == "") {
-        this.isError = true;
-      } else {
-        const value = {
-          id: this.todoList.length + 1,
-          name: this.name,
-          workTime: this.workTime,
-          isCompleted: false,
-        };
-        this.todoList.push(value);
-        this.isShow = !this.isShow;
-        this.isError = false;
-        this.name = "";
-        this.workTime = 1;
-      }
+    handleDeleteTodo() {
+      this.todoList.splice(this.todoIndex, 1);
+      this.deleteModal = false;
     },
-    isChange(){
-      window.addEventListener('onbeforeunload', () => {
-        const isLeave = window.confirm('Do you want to leave without finishing?');
-        if(!isLeave){
-          console.log('nooo');
-        }
-      });
-    }
   },
 };
-
 </script>
 
-<style scoped>
-.header {
-  background-color: rgb(31, 30, 61);
-  padding: 10px;
-  color: #fff;
+<style lang="scss" scoped>
+.btn__add-todo {
+  margin-right: 2px;
+  animation: left-to-right 0.25s;
 }
-.add__todo--item {
-  margin: 10px 0;
-}
-
-input.add__input:focus {
-  outline: none;
-  border: 1px solid turquoise;
-}
-.todo__table--list {
+.table__todo-list {
   width: 100%;
   text-align: center;
+  th {
+    padding: 5px 3px;
+  }
 }
-
 </style>>

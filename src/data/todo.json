@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Đọc sách",
+    "time": 30,
+    "note": "Duy trì mỗi ngày",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "name": "Học tập",
+    "time": 60,
+    "note": "Duy trì mỗi ngày",
+    "completed": false
+  },
+  {
+    "id": 3,
+    "name": "Code",
+    "time": 10,
+    "note": "Duy trì mỗi ngày",
+    "completed": false
+  },
+  {
+    "id": 4,
+    "name": "Chơi game",
+    "time": 180,
+    "note": "Duy trì mỗi ngày",
+    "completed": false
+  },
+  {
+    "id": 5,
+    "name": "Ngủ",
+    "time": 360,
+    "note": "Duy trì mỗi ngày",
+    "completed": false
+  }
+]
