@@ -1,12 +1,12 @@
 <template>
   <teleport to="#target">
     <transition name="fade">
-      <div v-if="deleteModal" class="modal">
-        <div class="modal__content">
+      <div v-if="deleteModal" class="overlay">
+        <div class="modal">
           <div class="modal__body">Do you want delete this todo?</div>
           <div class="modal__action">
             <button class="btn mr--10 text--dark" @click="closeModal()">
-              Close
+              Cancel
             </button>
             <button class="btn btn--red" @click="handleDelete()">Delete</button>
           </div>
@@ -38,8 +38,8 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-  position: absolute;
+.overlay {
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
@@ -52,7 +52,7 @@ export default {
   /* transition: 0.5s; */
 }
 
-.modal .modal__content {
+.modal {
   display: flex;
   flex-direction: column;
   align-items: center;
