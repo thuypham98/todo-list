@@ -1,14 +1,14 @@
 <template>
   <teleport to="#target">
     <transition name="fade">
-      <div v-if="deleteModal" class="modal">
-        <div class="modal__content">
-          <div class="modal__body">Do you want delete this todo?</div>
+      <div v-if="isShowDeleteModal" class="modal">
+        <div class="modal__inner pa--2">
+          <div class="modal__content">Do you want delete this todo?</div>
           <div class="modal__action">
-            <button class="btn mr--10 text--dark" @click="closeModal()">
-              Close
+            <button class="btn mr--1 text--dark" @click="closeModal()">
+              Cancel
             </button>
-            <button class="btn btn--red" @click="handleDelete()">Delete</button>
+            <button class="btn btn--red" @click="handleDeleteTodo()">Delete</button>
           </div>
         </div>
       </div>
@@ -20,17 +20,16 @@
 export default {
   name: 'DeleteModal',
   props: {
-    deleteModal: {
+    isShowDeleteModal: {
       type: Boolean,
       default: false,
     },
+    handleDeleteTodo: Function
   },
-  emits: ['handleDelete', 'closeModal'], // kebap-case -> log Warning 'Extraneous non-emits event listeners...'
+  emits: ['closeModal'], // kebap-case -> log Warning 'Extraneous non-emits event listeners...'
   setup(props, { emit }) {
-    const handleDelete = () => emit('handle-delete', false);
     const closeModal = () => emit('close-modal', false);
     return {
-      handleDelete,
       closeModal,
     };
   },
@@ -52,25 +51,28 @@ export default {
   /* transition: 0.5s; */
 }
 
-.modal .modal__content {
+.modal__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: white;
-  width: 18rem;
-  height: 8rem;
-  padding: 10px;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   animation: scale 0.5s;
 }
+
+.modal__content {
+  font-size: 2.5rem;
+}
+
 .modal__action {
   display: flex;
   justify-content: center;
   margin-top: 1rem;
-  padding: 10px;
+  padding: 1rem;
   /* border-top: 0.5px solid #ccc; */
 }
+
 @keyframes scale {
   0% {
     transform: scale(0) skew(50deg, 35deg);

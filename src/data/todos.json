@@ -1,37 +1,37 @@
 [
   {
     "id": 1,
-    "name": "Đọc sách",
+    "name": "Reading books",
     "time": 30,
-    "note": "Duy trì mỗi ngày",
+    "note": "Do it everyday",
     "completed": false
   },
   {
     "id": 2,
-    "name": "Học tập",
+    "name": "Study",
     "time": 60,
-    "note": "Duy trì mỗi ngày",
+    "note": "Do it everyday",
     "completed": false
   },
   {
     "id": 3,
-    "name": "Code",
+    "name": "Coding",
     "time": 10,
-    "note": "Duy trì mỗi ngày",
+    "note": "Do it everyday",
     "completed": false
   },
   {
     "id": 4,
-    "name": "Chơi game",
+    "name": "Playing games",
     "time": 180,
-    "note": "Duy trì mỗi ngày",
+    "note": "Do it everyday",
     "completed": false
   },
   {
     "id": 5,
-    "name": "Ngủ",
+    "name": "Sleeping",
     "time": 360,
-    "note": "Duy trì mỗi ngày",
+    "note": "Do it everyday",
     "completed": false
   }
 ]

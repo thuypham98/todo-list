@@ -1,65 +1,66 @@
 <template>
   <tr
-    :data-todo-id="todoProps.id"
+    :data-todo-id="todoProp.id"
     :class="[
       'todo__item',
-      todoProps.completed ? 'completed' : '',
-      state.isEdit ? 'row__edit' : '',
+      todoProp.completed ? 'completed' : '',
+      state.isEdit ? 'editing' : '',
     ]"
   >
     <td>
       <input
         type="checkbox"
         class="checkbox--large"
-        @change="completeTodo(todoProps)"
-        :checked="todoProps.completed"
-        :id="`completeCheckbox-${todoProps.id}`"
+        @change="completeTodo()"
+        :checked="todoProp.completed"
+        :id="`completeCheckbox-${todoProp.id}`"
       />
     </td>
     <td>
       <span
-        class="content__edit mobile__p--0"
+        class="todo__content"
         :contenteditable="state.isAllowEdit"
         ref="nameRef"
-        >{{ todoProps.name }}</span
+        >{{ todoProp.name }}</span
       >
     </td>
     <td>
       <span
-        class="content__edit mobile__p--0"
+        class="todo__content"
         :contenteditable="state.isAllowEdit"
-        >{{ todoProps.time }} phút</span
+        ref="timeRef"
+        >{{ todoProp.time }} Minutes</span
       >
     </td>
     <td>
       <span
-        class="content__edit mobile__p--0"
+        class="todo__content"
         :contenteditable="state.isAllowEdit"
-        >{{ todoProps.note }}</span
+        >{{ todoProp.note }}</span
       >
     </td>
-    <td>
-      <div class="table__action">
+    <td class="table__action">
+      <div class="d-flex fw jcc">
+        <template v-if="!state.isEdit">
+          <button
+            class="btn btn--primary fs--20"
+            @click="showEditTodoForm()"
+          >
+            ✎
+          </button>
+          <button
+            class="btn btn--red fs--20"
+            @click="removeTodo()"
+          >
+            ✘
+          </button>
+        </template>
         <button
-          class="btn btn--primary mr--10 fs--20 py--5"
-          v-if="!state.isEdit"
-          @click="editTodo(todoProps)"
-        >
-          ✎
-        </button>
-        <button
-          class="btn btn--success fs--20 py--5"
+          class="btn btn--success fs--20"
           v-else
           @click="handleEditTodo()"
         >
           ✔
-        </button>
-        <button
-          class="btn btn--red fs--20 py--5"
-          v-if="!state.isEdit"
-          @click="removeTodo()"
-        >
-          ✘
         </button>
       </div>
     </td>
@@ -71,7 +72,7 @@ import { reactive, ref } from 'vue';
 
 export default {
   name: 'TodoItem',
-  props: ['todoProps', 'indexTodo'], // data from parent component
+  props: ['todoProp', 'indexTodoProp'], // data from parent component
   emits: ['complete-todo', 'confirm-remove'],
   setup(props, context) {
     const state = reactive({
@@ -79,32 +80,41 @@ export default {
       isAllowEdit: false,
     });
     const nameRef = ref(null);
+    const timeRef = ref(null);
 
-    const completeTodo = (todoProps) => {
-      todoProps.completed = !todoProps.completed;
+    const completeTodo = () => {
       context.emit('complete-todo', {
-        value: todoProps.completed,
-        index: props.indexTodo,
+        value: !props.todoProp.completed,
+        index: props.indexTodoProp,
       });
     };
 
-    const editTodo = (todo) => {
-      state.isEdit = true;
-      state.isAllowEdit = props.todoProps.id == todo.id;
+    const showEditTodoForm = () => {
+      state.isEdit = state.isAllowEdit = true;
+      timeRef.value.innerText = timeRef.value.innerText.replaceAll(/Minutes/ig, '')
       setTimeout(() => nameRef.value.focus(), 500);
     };
 
     const handleEditTodo = () => {
+      if (!nameRef.value.innerText || !timeRef.value.innerText || isNaN(timeRef.value.innerText)) {
+        return false;
+      }
+      timeRef.value.innerText = `${timeRef.value.innerText} Minutes`;
       state.isEdit = state.isAllowEdit = false;
     };
 
-    const removeTodo = () => context.emit('confirm-remove', props.indexTodo);
+    const removeTodo = () => {
+      const selectedTodo = { ...props.todoProp };
+      selectedTodo.index = props.indexTodoProp;
+      context.emit('confirm-remove', selectedTodo)
+    }
 
     return {
       state,
       nameRef,
+      timeRef,
       completeTodo,
-      editTodo,
+      showEditTodoForm,
       handleEditTodo,
       removeTodo,
     };
@@ -114,36 +124,86 @@ export default {
 
 <style lang="scss" scoped>
 .todo__item {
-  height: 50px;
+  height: 5rem;
   background-color: #f5f5f5;
   border-bottom: 1px #ccc dotted;
-  &:nth-child(odd),
-  &:not(.row__edit):hover {
-    background-color: #e9e9e9;
+
+  &:not(.completed) {
+    &:nth-child(odd),
+    &:not(.editing):hover {
+      background-color: #e9e9e9;
+    }
+  }
+
+  td {
+    max-width: 20rem;
+
+    @include mq(sp) {
+      max-width: 10rem;
+    }    
   }
 }
-.completed {
-  text-decoration: line-through;
-  background-color: #b9b9b9 !important;
-}
-.content__edit {
-  outline: none;
-  padding: 5px 20px;
-  border-radius: 20px;
-}
 
-.row__edit {
-  transform: translateY(-2px);
-  box-shadow: 0 0 10px 5px #6a756c;
-  font-size: 1.2rem;
-  background-color: #fff !important;
-  transition: all 0.5s;
-  .content__edit {
+.todo__content {
+  outline: none;
+  padding: 0.5rem 2rem;
+  border-radius: 1.5rem;
+  display: block;
+  margin: 0.5rem;
+  word-break: break-word;
+  max-height: 9rem;
+  overflow-y: auto;
+
+  @extend .custom__scrollbar;
+
+  @include mq(sp) {
+    padding: 2px 4px;
+  }
+
+  .editing & {
     border: 0.3px solid #98baf7;
+
     &:focus {
       border-color: #6495ed;
       border-width: 2px;
     }
+  }
+}
+
+.table__action div {
+  gap: 0.5rem;
+
+  button {
+    padding: {
+      top: 0.5rem;
+      bottom: 0.5rem
+    };
+    flex-basis: 4rem;
+
+    @include mq(sp) {
+      font-size: 1.3rem;
+      flex-basis: 50%;
+    }
+  }
+}
+
+.editing {
+  transform: translateY(-2px);
+  box-shadow: 0 0 1rem 0.5rem #6a756c;
+  background-color: #fff !important;
+  transition: all 0.5s;
+
+  @include mq(sp) {
+    font-size: 1rem;
+  }
+}
+
+.completed {
+  background-color: #b9b9b9;
+  color: #999;
+  
+  &:not(.editing) .todo__content {
+    text-decoration: line-through;
   }
 }
 </style>
