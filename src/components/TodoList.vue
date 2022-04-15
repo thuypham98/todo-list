@@ -1,151 +1,116 @@
 <template>
-  <div class="header" align="center">
-    <img alt="Vue logo" height="50" src="../assets/logo.png" />
-    <h1>Todo List</h1>
-  </div>
-  <!-- <div contenteditable="true">I'm Editable. Edit me!</div> -->
-  <div class="content">
-    <button
-      class="btn my--20 bg--blue"
-      v-if="!isShow"
-      @click="isShow = !isShow"
-    >
-      +
-    </button>
-    <div class="add__todo--item" v-if="isShow">
-      <AddItem v-bind:todoList="todoList" @add-item="addItem"/>
-      <!-- <input
-        type="text"
-        class="add__input"
-        placeholder="Todo name"
-        v-model="name"
-        @change="isChange"
-      />
-      <input
-        type="number"
-        class="add__input mx--20"
-        placeholder="Todo time"
-        min="1"
-        v-model="workTime"
-        @change="isChange"
-      />
-      <button class="btn btn__add" @click="addTodoItem()">Add</button> -->
-    </div>
-    <p style="color: #ff0000" v-if="isError">Vui lòng nhập công việc</p>
-    <table class="todo__table--list" border="1" cellpadding="5" cellspacing="0">
-      <tr bgColor="cadetblue">
-        <th>Complete</th>
-        <th>Work</th>
-        <th>Time</th>
-        <th>Action</th>
-      </tr>
-      <TodoItem
-        v-for="(todo, index) in todoList"
-        v-bind:key="todo.id"
-        v-bind:todoProps="todo"
-        v-bind:indexProps="index"
-        @remove-from-parent="removeTodoItem"
-      />
+  <div class="todo-list__wrap mb--3">
+    <transition name="fade">
+      <button
+        class="btn my--1 bg--blue float--right btn__add-todo"
+        v-if="!isShowAddForm"
+        @click="isShowAddForm = !isShowAddForm"
+      >
+        ✢
+      </button>
+    </transition>
+    <AddTodoForm
+      v-if="isShowAddForm"
+      @add-todo="addTodo($event)"
+      @cancelAdd="isShowAddForm = !isShowAddForm"
+    />
+    <table class="todo-list__table">
+      <thead>
+        <tr bgColor="cadetblue" class="text--light">
+          <th>Status</th>
+          <th>Name</th>
+          <th>Time</th>
+          <th>Note</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <TodoItem
+          v-for="(todo, index) in todoList"
+          v-bind:key="todo.id"
+          v-bind:todoProp="todo"
+          v-bind:indexTodoProp="index"
+          @completeTodo="completeTodo($event)"
+          @confirmRemove="openConfirmModal($event)"
+        />
+      </tbody>
     </table>
+    <DeleteModal
+      :isShowDeleteModal="isShowDeleteModal"
+      :handleDeleteTodo="handleDeleteTodo"
+      @closeModal="isShowDeleteModal = $event"
+    />
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
-import TodoItem from "./TodoItem";
-import AddItem from './AddItem';
+import { ref, watch } from 'vue';
+import TodoItem from './TodoItem';
+import AddTodoForm from './AddTodoForm';
+import todos from '@/data/todos.json';
+import DeleteModal from '@/components/DeleteModal.vue';
 
 export default {
-  name: "TodoList",
+  name: 'TodoList',
   components: {
     TodoItem,
-    AddItem
+    AddTodoForm,
+    DeleteModal,
   },
   setup() {
-    const todoList = ref([
-      {
-        id: 1,
-        name: "Đọc sách",
-        workTime: 30,
-        isCompleted: false,
-      },
-      {
-        id: 2,
-        name: "Học tập",
-        workTime: 60,
-        isCompleted: false,
-      },
-      {
-        id: 3,
-        name: "Chơi game",
-        workTime: 180,
-        isCompleted: false,
-      },
-    ]);
-    const addItem = newItem => {
+    const todoList = ref(todos);
+    const addTodo = (newItem) => {
       todoList.value.push(newItem);
-    }
-    return { todoList, addItem };
+    };
+    const completeTodo = ({ value, index }) => {
+      todoList.value[index].completed = value;
+    };
+    watch(todoList.value, () => {
+      todoList.value.sort((a, b) => a.completed - b.completed);
+    });
+    
+    return { todoList, addTodo, completeTodo };
   },
   data() {
     return {
-      isShow: false,
-      isError: false,
-      name: "",
-      workTime: 1,
+      isShowAddForm: false,
+      isShowDeleteModal: false,
+      selectedTodo: null,
     };
   },
   methods: {
-    removeTodoItem(index) {
-      this.todoList.splice(index, 1);
+    openConfirmModal(todo) {
+      this.selectedTodo = todo;
+      this.isShowDeleteModal = true;
     },
-    addTodoItem() {
-      if (this.name == "") {
-        this.isError = true;
-      } else {
-        const value = {
-          id: this.todoList.length + 1,
-          name: this.name,
-          workTime: this.workTime,
-          isCompleted: false,
-        };
-        this.todoList.push(value);
-        this.isShow = !this.isShow;
-        this.isError = false;
-        this.name = "";
-        this.workTime = 1;
-      }
+    handleDeleteTodo() {
+      this.todoList.splice(this.selectedTodo.index, 1);
+      this.isShowDeleteModal = false;
     },
-    isChange(){
-      window.addEventListener('onbeforeunload', () => {
-        const isLeave = window.confirm('Do you want to leave without finishing?');
-        if(!isLeave){
-          console.log('nooo');
-        }
-      });
-    }
   },
 };
-
 </script>
 
-<style scoped>
-.header {
-  background-color: rgb(31, 30, 61);
-  padding: 10px;
-  color: #fff;
-}
-.add__todo--item {
-  margin: 10px 0;
+<style lang="scss" scoped>
+.todo-list {
+  &__table {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+
+    @include mq(sp) {
+      font-size: 1.3rem;
+    }
+
+    th {
+      padding: 5px 3px;
+      font-size: 1.8rem;
+    }
+  }
 }
 
-input.add__input:focus {
-  outline: none;
-  border: 1px solid turquoise;
+.btn__add-todo {
+  margin-right: 2px;
+  animation: left-to-right 0.25s;
 }
-.todo__table--list {
-  width: 100%;
-  text-align: center;
-}
-
 </style>>

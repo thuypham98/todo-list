@@ -1,20 +1,25 @@
 <template>
-  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+  <Header />
   <TodoList />
+  <Footer />
 </template>
 
 <script>
-import TodoList from "./components/TodoList";
+import Header from './components/Header.vue';
+import TodoList from './components/TodoList.vue';
+import Footer from './components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
-    TodoList
-  }
-}
+    Header,
+    TodoList,
+    Footer,
+  },
+};
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -1,0 +1,354 @@
+@use 'sass:math';
+
+$bp_tab: 1024px; //tab
+$bp_sp: 767px; //sp
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 10px;
+}
+
+.custom__scrollbar {
+	&::-webkit-scrollbar {
+		width: 5px;
+		height: 5px; // scroll X
+
+		/* Track (nền scrollbar) */
+		&-track {
+			box-shadow: 0 0 5px #b3b3b3 inset; // ngang-dọc-mờ-lan rộng
+			border-radius: 10px;
+			margin-top: 1.2rem;
+			margin-bottom: 1.2rem;
+		}
+
+		/* Handle (thanh trượt) */
+		&-thumb {
+			background: #cdf8ff;
+			border-radius: 10px;
+
+			&:hover {
+				background: #adf2fc;
+			}
+		}
+	}
+}
+
+@for $i from 2 through 5 {
+	.max-line--#{$i} {
+		display: -webkit-box;
+		-webkit-line-clamp: #{$i};
+		-webkit-box-orient: vertical;  
+		overflow: hidden;
+	}
+}
+
+input[type='checkbox'] {
+  cursor: pointer;
+}
+
+.fs--20 {
+  font-size: 20px;
+}
+
+.btn {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 3px;
+  border: none;
+  outline: none;
+  color: #fff;
+}
+
+.btn:hover {
+  box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 50%);
+  transform: scale(1.03);
+  transition: 0.25s;
+}
+
+.btn--success {
+  background-color: green;
+}
+
+.btn--red {
+  background-color: #ff0000;
+}
+
+.btn--primary {
+  background-color: #0d6efd;
+}
+
+.btn--secondary {
+  background-color: #6c757d;
+}
+
+.btn--info {
+  background-color: #3dd5f3;
+}
+
+.btn--rounded {
+  padding: 8px 30px;
+  border-radius: 20px;
+}
+
+// @each $value in 1, 2, 3 {
+//   .my--#{$value} {
+//     margin-top: #{$value}rem;
+//     margin-bottom: #{$value}rem;
+//   }
+// }
+
+@for $i from 0 through 5 {
+	.mt--#{$i},
+	.my--#{$i} {
+		margin-top: #{$i}rem;
+	}
+
+	.mb--#{$i},
+	.my--#{$i} {
+		margin-bottom: #{$i}rem;
+	}
+
+	.mr--#{$i},
+	.mx--#{$i} {
+		margin-right: #{$i}rem;
+	}
+
+	.ml--#{$i},
+	.mx--#{$i} {
+		margin-left: #{$i}rem;
+	}
+
+  .ma--#{$i} {
+    margin: #{$i}rem;
+  }
+
+	.pt--#{$i},
+	.py--#{$i} {
+		padding-top: #{$i}rem;
+	}
+
+	.pb--#{$i},
+	.py--#{$i} {
+		padding-bottom: #{$i}rem;
+	}
+
+	.pr--#{$i},
+	.px--#{$i} {
+		padding-right: #{$i}rem;
+	}
+
+	.pl--#{$i},
+	.px--#{$i} {
+		padding-left: #{$i}rem;
+	}
+
+  .pa--#{$i} {
+    padding: #{$i}rem;
+  }
+}
+
+.mx--auto {
+  margin: 0 auto;
+}
+
+.bg--blue {
+  background-color: #0000ff;
+}
+
+.text--light {
+  color: #fff;
+}
+
+.text--dark {
+  color: #000;
+}
+
+.text--red {
+  color: #ff0000;
+}
+
+.border--red {
+  border-color: #ff0000;
+
+  &:focus {
+    border-color: #ff0000;
+  }
+}
+
+.bg--gray {
+  background-color: #c1c1c1;
+}
+
+.checkbox--large {
+  transform: scale(1.5);
+}
+
+.d-flex {
+  display: flex;
+}
+
+.jcb {
+	justify-content: space-between;
+}
+
+.jcc {
+	justify-content: center;
+}
+
+.jce {
+	justify-content: flex-end;
+}
+
+.aic {
+	align-items: center;
+}
+
+.aie {
+	align-items: flex-end;
+}
+
+.ais {
+	align-items: start;
+}
+
+
+.fc {
+	flex-direction: column;
+}
+
+.fw {
+	flex-wrap: wrap;
+}
+
+.float--right {
+  float: right;
+}
+
+/* fade animate */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* bounce animate */
+.bounce-enter-active {
+  animation: bounce-in 0.5s ease-out both;
+}
+
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse ease-in both;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes left-to-right {
+  0% {
+    /* width: 0px; */
+    opacity: 0;
+    background-color: #028fe7;
+    transform: translateX(-100%);
+  }
+  100% {
+    /* width: 50%; */
+    opacity: 1;
+    background-color: #fff;
+    transform: translateX(0);
+  }
+}
+
+// Media query mixin
+@mixin mq($device, $val1: null, $val2: null) {
+	@if $device == pc {
+		// pc (>= 1025px)
+		@media only screen and (min-width: $bp_tab + 1) {
+			@content;
+		}
+		@media print {
+			@content;
+		}
+		.ie8 {
+			@content;
+		}
+	} @else if $device == pc_tab {
+		// pc & tab (>= 768px)
+		@media only screen and (min-width: $bp_sp + 1) {
+			@content;
+		}
+		@media print {
+			@content;
+		}
+	} @else if $device == pc_tab_l {
+		// pc & tab (>= 896.5px)
+		@media only screen and (min-width: math.div($bp_tab - $bp_sp, 2) + $bp_sp + 1) {
+			@content;
+		}
+		@media print {
+			@content;
+		}
+	} @else if $device == tab {
+		// tab (>= 768px && <= 1024px)
+		@media only screen and (min-width: $bp_sp + 1) and (max-width: $bp_tab) {
+			@content;
+		}
+	} @else if $device == tab_sp {
+		// tab & sp (<= 1024px)
+		@media only screen and (max-width: $bp_tab) {
+			@content;
+		}
+	} @else if $device == tab_s {
+		// tab_s (>= 768px && <= 895.5px)
+		@media only screen and (min-width: $bp_sp + 1) and (max-width: math.div($bp_tab - $bp_sp, 2) + $bp_sp) {
+			@content;
+		}
+	} @else if $device == tab_s_sp {
+		// tab_s & sp (<= 895.5px)
+		@media only screen and (max-width: math.div($bp_tab - $bp_sp, 2) + $bp_sp) {
+			@content;
+		}
+		@media print {
+			@content;
+		}
+	} @else if $device == sp {
+		// sp (<= 767px)
+		@media only screen and (max-width: $bp_sp) {
+			@content;
+		}
+	} @else if $device == min_w {
+		// min-width
+		@media only screen and (min-width: $val1) {
+			@content;
+		}
+		@media print {
+			@content;
+		}
+	} @else if $device == max_w {
+		// max-width
+		@media only screen and (max-width: $val1) {
+			@content;
+		}
+		@if $val1 > $bp_tab {
+			@media print {
+				@content;
+			}
+		}
+	}
+}

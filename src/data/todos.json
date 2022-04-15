@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Reading books",
+    "time": 30,
+    "note": "Do it everyday",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "name": "Study",
+    "time": 60,
+    "note": "Do it everyday",
+    "completed": false
+  },
+  {
+    "id": 3,
+    "name": "Coding",
+    "time": 10,
+    "note": "Do it everyday",
+    "completed": false
+  },
+  {
+    "id": 4,
+    "name": "Playing games",
+    "time": 180,
+    "note": "Do it everyday",
+    "completed": false
+  },
+  {
+    "id": 5,
+    "name": "Sleeping",
+    "time": 360,
+    "note": "Do it everyday",
+    "completed": false
+  }
+]
