@@ -1,3 +1,6 @@
+# Vercel domain
+https://cris-todo-list.vercel.app
+
 # todo-list
 
 ## Project setup
